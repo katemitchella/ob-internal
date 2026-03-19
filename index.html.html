@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Values in Action — Q1 2026</title>
+<style>
+  :root {
+    --black: #1A1A1A;
+    --grey-mid: #555555;
+    --grey-light: #999999;
+    --grey-bg: #F4F4F4;
+    --white: #FFFFFF;
+    --futura: 'Futura MD BT', 'Futura', 'Century Gothic', 'Trebuchet MS', sans-serif;
+    --body: 'Futura MD BT', 'Futura', 'Century Gothic', 'Trebuchet MS', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body { font-family: var(--body); background: var(--white); color: var(--black); -webkit-font-smoothing: antialiased; }
+
+  /* ─── HERO ─── */
+  .hero {
+    background: var(--black);
+    color: var(--white);
+    padding: 72px 48px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 320px; height: 320px; border: 2px solid rgba(255,255,255,0.07); border-radius: 50%;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -80px; right: 80px;
+    width: 200px; height: 200px; border: 2px solid rgba(255,255,255,0.05); border-radius: 50%;
+  }
+  .hero-label {
+    font-family: var(--futura); font-size: 10px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: var(--futura); font-size: clamp(42px, 6vw, 68px);
+    font-weight: normal; letter-spacing: -0.02em; line-height: 1; margin-bottom: 16px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-title span {
+    display: block; font-size: clamp(16px, 2vw, 22px); font-weight: 300;
+    color: rgba(255,255,255,0.55); letter-spacing: 0.05em; margin-top: 10px;
+  }
+  .hero-intro {
+    max-width: 560px; margin-top: 32px; font-size: 14px; line-height: 1.7;
+    color: rgba(255,255,255,0.7); font-weight: 300;
+    border-left: 2px solid rgba(255,255,255,0.2); padding-left: 20px;
+    animation: fadeUp 0.6s 0.15s ease both;
+  }
+
+  /* ─── STATS ROW ─── */
+  .stats-row {
+    display: flex; gap: 0; background: var(--grey-bg);
+    border-bottom: 1px solid #E0E0E0;
+  }
+  .stat {
+    flex: 1; padding: 28px 32px; border-right: 1px solid #E0E0E0;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-number {
+    font-family: var(--futura); font-size: 36px; font-weight: normal;
+    color: var(--black); line-height: 1; margin-bottom: 6px;
+  }
+  .stat-label {
+    font-family: var(--futura); font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--grey-light);
+  }
+
+  /* ─── SECTION DIVIDER ─── */
+  .section-divider {
+    display: flex; align-items: center; padding: 48px 48px 0; gap: 20px;
+  }
+  .section-divider-label {
+    font-family: var(--futura); font-size: 11px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--grey-light); white-space: nowrap;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: #E0E0E0; }
+  .section-value-badge {
+    font-family: var(--futura); font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; background: var(--black); color: var(--white);
+    padding: 6px 14px; white-space: nowrap;
+  }
+
+  /* ─── GRID ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px; background: #E0E0E0;
+    margin: 24px 48px 0;
+    border: 1px solid #E0E0E0;
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--white); padding: 32px 28px 28px;
+    position: relative; transition: background 0.2s ease;
+  }
+  .card:hover { background: #FAFAFA; }
+
+  .card-number {
+    font-family: var(--futura); font-size: 10px; letter-spacing: 0.2em;
+    color: var(--grey-light); margin-bottom: 16px;
+  }
+  .card-name {
+    font-family: var(--futura); font-size: 20px; font-weight: normal;
+    letter-spacing: -0.01em; line-height: 1.1; color: var(--black); margin-bottom: 6px;
+  }
+  .card-role {
+    font-size: 10.5px; letter-spacing: 0.05em; color: var(--grey-mid);
+    margin-bottom: 18px; line-height: 1.5; font-weight: 300;
+  }
+  .card-divider { width: 24px; height: 2px; background: var(--black); margin-bottom: 18px; }
+  .card-body {
+    font-size: 12.5px; line-height: 1.75; color: #333333;
+    font-weight: 300; margin-bottom: 20px;
+  }
+  .card-nominator {
+    font-size: 10px; color: var(--grey-light); font-style: italic;
+    letter-spacing: 0.02em; padding-top: 14px; border-top: 1px solid #EEEEEE; font-weight: 300;
+  }
+  .card-nominator strong { font-style: normal; font-weight: normal; color: var(--grey-mid); }
+
+  /* shortlisted badge */
+  .shortlisted-badge {
+    display: inline-block; font-family: var(--futura); font-size: 8px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey-light);
+    border: 1px solid #E0E0E0; padding: 3px 8px; margin-bottom: 14px;
+  }
+
+  /* ─── FEATURED CARD ─── */
+  .card.featured { background: var(--black); color: var(--white); }
+  .card.featured:hover { background: #222222; }
+  .card.featured .shortlisted-badge {
+    color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.15);
+  }
+  .card.featured .card-number { color: rgba(255,255,255,0.3); }
+  .card.featured .card-name   { color: var(--white); }
+  .card.featured .card-role   { color: rgba(255,255,255,0.5); }
+  .card.featured .card-divider { background: rgba(255,255,255,0.3); }
+  .card.featured .card-body   { color: rgba(255,255,255,0.8); }
+  .card.featured .card-nominator { color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.1); }
+  .card.featured .card-nominator strong { color: rgba(255,255,255,0.6); }
+
+  /* ─── BOTTOM BAR ─── */
+  .bottom-bar {
+    background: var(--grey-bg); margin: 48px 0 0;
+    padding: 40px 48px; display: flex; gap: 48px; flex-wrap: wrap;
+  }
+  .bottom-bar-item { flex: 1; min-width: 200px; }
+  .bottom-bar-label {
+    font-family: var(--futura); font-size: 9px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--grey-light); margin-bottom: 8px;
+  }
+  .bottom-bar-text { font-size: 13px; line-height: 1.65; color: var(--grey-mid); font-weight: 300; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--black); padding: 24px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer span {
+    font-family: var(--futura); font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(255,255,255,0.35);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .hero, .section-divider, .bottom-bar { padding-left: 24px; padding-right: 24px; }
+    .cards-grid { margin: 16px 24px 0; }
+    .hero { padding-top: 48px; padding-bottom: 40px; }
+    .stats-row { flex-wrap: wrap; }
+    .stat { min-width: 50%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── HERO ─── -->
+<header class="hero">
+  <p class="hero-label">Oliver Bonas &nbsp;·&nbsp; Internal Recognition &nbsp;·&nbsp; Q1 2026</p>
+  <h1 class="hero-title">
+    Values in Action
+    <span>Every nomination from this quarter — all 26 of them.</span>
+  </h1>
+  <p class="hero-intro">
+    Each quarter, we ask the business to tell us about team members who've gone genuinely beyond their role to live our values. These are all the nominations we received for Q1 2026 — from stores, warehouse, web fulfilment and support office. The shortlisted nominees for LT consideration are highlighted in each section.
+  </p>
+</header>
+
+<!-- ─── STATS ROW ─── -->
+<div class="stats-row">
+  <div class="stat">
+    <p class="stat-number">26</p>
+    <p class="stat-label">Nominations received</p>
+  </div>
+  <div class="stat">
+    <p class="stat-number">9</p>
+    <p class="stat-label">Shortlisted for LT</p>
+  </div>
+  <div class="stat">
+    <p class="stat-number">3</p>
+    <p class="stat-label">Winners chosen</p>
+  </div>
+  <div class="stat">
+    <p class="stat-number">5+</p>
+    <p class="stat-label">Areas of the business represented</p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════ WORK HARD ════ -->
+<div class="section-divider">
+  <span class="section-divider-label">Value one</span>
+  <div class="section-divider-line"></div>
+  <span class="section-value-badge">Work Hard</span>
+</div>
+
+<div class="cards-grid">
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">01 — Work Hard</p>
+    <h2 class="card-name">Alex Satchwell</h2>
+    <p class="card-role">Operations &nbsp;·&nbsp; Support Office</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Post-NetSuite go-live, Alex taught herself to build reporting across three systems — PVX, NetSuite and Futura — largely self-directed. She built stocktake reporting from scratch, became a trusted knowledge source for five teams (finance, data, ERP, stock control and returns), and created training resources for warehouse and returns team members. Multiple senior team members credited her independently with making peak stocktake reconciliation possible. Without her reporting, resolving post-go-live stock discrepancies would have taken the business significantly longer.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Jen Crofts, Senior Operations Manager</p>
+  </div>
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">02 — Work Hard</p>
+    <h2 class="card-name">Jordan Healey</h2>
+    <p class="card-role">Pick Team &nbsp;·&nbsp; LPA Warehouse</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Working unsupervised in the driver bays during peak, Jordan proactively found additional work whenever throughput slowed — operating the forklift to move pallets, unloading fixtures, clearing the warehouse, maximising shuttle driver efficiency. No prompting, no management oversight. He self-managed throughout one of the busiest periods of the year.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Danny Styles &amp; Jack Bradley, Returns Team Leaders</p>
+  </div>
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">03 — Work Hard</p>
+    <h2 class="card-name">Rhian Brown</h2>
+    <p class="card-role">Assistant Merchandiser, Fashion Clothing &nbsp;·&nbsp; Support Office</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Rhian received two independent nominations from different team members. During a sustained period of short-staffing and NetSuite rollout, she worked long hours, came into the office four days a week, and picked up tasks across teams to make sure nothing fell short. Solutions-focused, positive and communicative throughout — without being asked to do any of it.</p>
+    <p class="card-nominator"><strong>Nominated independently by</strong> Ella Warwick, Senior MAA — Fashion Clothing &amp; Rachel Jeffery, Merchandiser — Fashion Clothing</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">04 — Work Hard</p>
+    <h2 class="card-name">Sean Phelan</h2>
+    <p class="card-role">Returns Team &nbsp;·&nbsp; LPA Warehouse</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Sean went above and beyond over several months to support the NetSuite implementation, taking on a significant increase in admin tasks alongside his usual role. He updated training guides, made valuable additions to KPI trackers, and consistently stepped in wherever support was needed. His nominator says the whole team has learned something from him.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Jack Bradley, Returns Team Leader</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">05 — Work Hard</p>
+    <h2 class="card-name">Elena</h2>
+    <p class="card-role">Customer Services &amp; Warehouse</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Elena provided flexible, expert support during NetSuite testing and go-live for the eCommerce function — placing orders, creating refunds, and drawing on her cross-functional knowledge across both CS and warehouse. Her nominator describes her SME knowledge as indispensable and says she is genuinely a pleasure to work with on any cross-functional project.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Sumaï Bertrand, Transformation Manager</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">06 — Work Hard</p>
+    <h2 class="card-name">Hannah Rainey</h2>
+    <p class="card-role">Home &amp; Gift Buying &nbsp;·&nbsp; Support Office</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Hannah has been a consistent anchor through ERP change, systems transitions and commodity code work — all while continuing to source and deliver an outstanding beauty and wellness range. Her eye for detail and process-oriented thinking have helped guide the team through a lot of change, and she's kept people motivated throughout. A decade of excellent work that her nominator didn't want to go unacknowledged.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Kate Salmon, Head of Home &amp; Gift Buying</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">07 — Work Hard</p>
+    <h2 class="card-name">Devika Limbu</h2>
+    <p class="card-role">Acting Assistant Store Manager &nbsp;·&nbsp; Reading</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Devika stepped up from Supervisor to ASM while their manager was on maternity leave — taking on the role with an open mind and real determination. She gives 150% in everything she does, seeks help when unsure, and her confidence has grown visibly. Her team's support for her on management days speaks for itself.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Julia Cheng, Store Manager, Reading</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">08 — Work Hard</p>
+    <h2 class="card-name">Jodie White</h2>
+    <p class="card-role">Team Member &nbsp;·&nbsp; Reading</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Jodie took ownership of e-receipts and substitutions from the start of the year and has run with it independently — consistently feeding back to management on how to improve and never needing to be chased for updates. She has been a reliable pillar of support for a new management team during a period of change.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Julia Cheng, Store Manager, Reading</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">09 — Work Hard &amp; Play Hard</p>
+    <h2 class="card-name">Claire Whitehead</h2>
+    <p class="card-role">Team Member &nbsp;·&nbsp; Reading</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Claire joined in June 2025 and has become essential to the Reading team. She completes every task to a high standard with a "anything to help us do well" attitude, maintains consistently great customer service, and brings genuine energy to the floor — known to dance to the OB playlist even with customers browsing nearby. Her enthusiasm is contagious.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Julia Cheng, Store Manager, Reading</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">10 — Work Hard</p>
+    <h2 class="card-name">MAAs across H&amp;G &amp; Fashion</h2>
+    <p class="card-role">Merchandising &nbsp;·&nbsp; Support Office &nbsp;·&nbsp; Group nomination</p>
+    <div class="card-divider"></div>
+    <p class="card-body">The MAA teams across Home &amp; Gift and Fashion navigated an exceptionally challenging peak while simultaneously learning a new ERP system and managing a raft of allocation issues. They troubleshot and resolved problems quickly, ensuring no store was left with an empty shopfloor. Their nominator describes them as having faced the most challenging peak to date with a consistently positive attitude.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Katie Dominy, Senior Merchandiser — Home &amp; Gift</p>
+  </div>
+
+</div>
+
+
+<!-- ════════════════════════════════════════ PLAY HARD ════ -->
+<div class="section-divider" style="padding-top: 56px;">
+  <span class="section-divider-label">Value two</span>
+  <div class="section-divider-line"></div>
+  <span class="section-value-badge">Play Hard</span>
+</div>
+
+<div class="cards-grid">
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">11 — Play Hard</p>
+    <h2 class="card-name">Jennifer Gough</h2>
+    <p class="card-role">Assistant Store Manager &nbsp;·&nbsp; Cheltenham</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Completely unprompted, Jenn created a full plan for embedding OB values in her store — a 360Learning posting schedule for the team to contribute ideas, 'side quest' tasking formats, and a staff room board for celebrating personal wins. She presented it to her Store Manager as a poster, then actioned every part of it herself. Nobody asked her to do any of it. Creative, self-motivated, and entirely beyond her remit.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Amy Phillips, Store Manager, Cheltenham</p>
+  </div>
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">12 — Play Hard</p>
+    <h2 class="card-name">Laura Pow</h2>
+    <p class="card-role">Assistant Store Manager &nbsp;·&nbsp; Jesmond</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Laura joined a brand-new team mid-year, helped train team members while still in training herself, then ran her first peak with consistent energy and humour — having lost her father just before Christmas. She kept the whole team laughing through the hardest stretch of the year. Her Store Manager says she simply could not have done it without her.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Kayleigh Nesbitt, Store Manager, Jesmond</p>
+  </div>
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">13 — Play Hard</p>
+    <h2 class="card-name">Ava</h2>
+    <p class="card-role">Team Member &nbsp;·&nbsp; Bluewater</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Ava's ASM started a basic monthly store newsletter. Ava asked if she could get involved, was handed the project, and made it entirely her own — elevating it significantly. The November edition was a huge step up from the original and the team's response has been brilliant. She took initiative, ran with it, and produced something genuinely good.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Giedre Nicholls, Assistant Store Manager, Bluewater</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">14 — Play Hard</p>
+    <h2 class="card-name">Lindsey Sheldrake</h2>
+    <p class="card-role">Store Manager &nbsp;·&nbsp; Windsor</p>
+    <div class="card-divider"></div>
+    <p class="card-body">No matter what the day brings, Lindsey finds a way to make her team laugh and keep the vibe positive. She reads how people are feeling and lifts them — with a joke, encouragement, or simply checking in. Her team say they genuinely love coming to work. Customers notice too, with many saying she brightens their day. Her nominator describes her as the person who makes the store a fun and joyful place to be.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Kiana Doncaster, Assistant Store Manager, Windsor</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">15 — Play Hard</p>
+    <h2 class="card-name">Max</h2>
+    <p class="card-role">Assistant Store Manager &nbsp;·&nbsp; York</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Max brings instant joy to his workplace with his singing, humour and enthusiasm — but he also digs into the figures and his passion for learning and doing the job well is infectious. His Store Manager says his energy makes her do her own job better, and she's genuinely looking forward to the year ahead with him in the team.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Natalie Jackson, Store Manager, York</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">16 — Play Hard</p>
+    <h2 class="card-name">Yasmine Volcy</h2>
+    <p class="card-role">Team Member &nbsp;·&nbsp; East Dulwich</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Yasmine has taken huge strides in VM and proactively puts together inspiration areas that are having a positive impact on sales. Her customer interactions are consistently cheerful and helpful, and she goes above and beyond in supporting both the store and management. Her nominator says she's a genuine pleasure to have on the team.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Meredith Bartlett, Store Manager, East Dulwich</p>
+  </div>
+
+</div>
+
+
+<!-- ════════════════════════════════════════ BE KIND ════ -->
+<div class="section-divider" style="padding-top: 56px;">
+  <span class="section-divider-label">Value three</span>
+  <div class="section-divider-line"></div>
+  <span class="section-value-badge">Be Kind</span>
+</div>
+
+<div class="cards-grid">
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">17 — Be Kind</p>
+    <h2 class="card-name">Grace McDonald</h2>
+    <p class="card-role">Team Member &nbsp;·&nbsp; Jesmond</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Grace came in on her day off with a care package — herbal tea and treats — for a team member under pressure from upcoming exams. Nobody asked her to. There was no announcement. She simply showed up. Small, specific, and exactly the kind of thing this award exists to recognise.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Laura Pow, Assistant Store Manager, Jesmond</p>
+  </div>
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">18 — Be Kind</p>
+    <h2 class="card-name">Zac Paston-Delmas</h2>
+    <p class="card-role">Web Fulfilment &nbsp;·&nbsp; PM Shift</p>
+    <div class="card-divider"></div>
+    <p class="card-body">During peak, a team member became unwell at her workbench in the warehouse. Zac immediately stepped in — cleaning the area and making sure she got home safely. Well outside his role, well outside any reasonable expectation. He handled it without hesitation and with genuine care. His nominator is clear: it wasn't duty, it was character.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Zillah Nicolle, Trainer, Web Fulfilment PM Shift</p>
+  </div>
+
+  <div class="card featured">
+    <p class="shortlisted-badge">★ Shortlisted</p>
+    <p class="card-number">19 — Be Kind</p>
+    <h2 class="card-name">Mel &amp; Sanah</h2>
+    <p class="card-role">Team Members &nbsp;·&nbsp; Didsbury</p>
+    <div class="card-divider"></div>
+    <p class="card-body">While their Store Manager was away opening Altrincham for a month over Christmas, Mel and Sanah held everything together from a distance. Always on the other end of the phone — sending practical supplies including till roll on 23 December, treats and cards to keep morale high. Sustained, practical and emotional support across the most intense trading period of the year.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Ellie Boocock, Store Manager, Didsbury</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">20 — Be Kind</p>
+    <h2 class="card-name">Carly Robinson</h2>
+    <p class="card-role">Customer Services &nbsp;·&nbsp; Support Office</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Working under constant time pressure in customer services, Carly is always calm, kind and ready to help — team members and customers alike. She greets everyone with warmth every single day. And when she visits the OB Boutique, she films a live video so anyone who can't get there has the chance to buy something too. A thoughtful touch that nobody asked for, and everyone appreciated.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Emma Bryan, Customer Service Advisor</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">21 — Be Kind</p>
+    <h2 class="card-name">Chantal Callan</h2>
+    <p class="card-role">Area Manager</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Chantal has been a pillar of support through a challenging period — always constructive, always honest, and never above getting her hands into tasking while in store. On a recent visit during a difficult trading period, rather than directing, she asked the right questions to challenge commercial thinking. Her nominator values that Chantal makes the connection between store and area feel genuinely supportive.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Julia Cheng, Store Manager, Reading</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">22 — Be Kind</p>
+    <h2 class="card-name">Cloe</h2>
+    <p class="card-role">Team Member &nbsp;·&nbsp; Bluewater</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Cloe is a part-time TM who operates with full management-level awareness. She spots gaps on the shopfloor, delegates the team to fill them, adjusts deployment when needed, and is someone her ASM says she never feels she's running a day alone when Cloe is in. The team respects her exactly as they would a manager. A genuinely rare quality.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Giedre Nicholls, Assistant Store Manager, Bluewater</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">23 — Be Kind</p>
+    <h2 class="card-name">Kate Swan</h2>
+    <p class="card-role">Learning &amp; Development Coordinator &nbsp;·&nbsp; Support Office</p>
+    <div class="card-divider"></div>
+    <p class="card-body">When a store manager reached out for support with training for an individual, Kate set up a learning path within the day and kept the store looped in throughout. At the end she simply said: reach out whenever you need anything. A small gesture that made the store feel genuinely supported by SO — and a reminder that the gap between the two doesn't have to be as wide as it sometimes feels.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Julia Cheng, Store Manager, Reading</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">24 — Be Kind</p>
+    <h2 class="card-name">Row</h2>
+    <p class="card-role">IT &nbsp;·&nbsp; Support Office</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Row is quick to respond, always makes time for people, and has played a key role in improving the way the IT and People teams work together. Her positive energy and hard work are felt across the support office — her nominator notes that many others sing her praises too, without ever being prompted.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Beth Jenkinson, People Co-ordinator</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">25 — Be Kind</p>
+    <h2 class="card-name">Catherine Ayling</h2>
+    <p class="card-role">Team Member &nbsp;·&nbsp; Sevenoaks</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Catherine goes above and beyond not just for customers, but for her team and the business as a whole. There is never a shift without laughter, inclusion and compassion. Her nominator says that anyone lucky enough to meet her — even for a minute — would say the same.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Megan Richards, Team Member, Sevenoaks</p>
+  </div>
+
+  <div class="card">
+    <p class="card-number">26 — Be Kind</p>
+    <h2 class="card-name">Jen South</h2>
+    <p class="card-role">Head of Learning &amp; Development</p>
+    <div class="card-divider"></div>
+    <p class="card-body">Following a return from maternity leave — a transition her nominator describes as harder than expected — Jen attended a Q1 area meeting and took the time to genuinely listen, validate how the manager was feeling, and help her make sense of it all. Grounding the conversation in OB values throughout. A reminder that good people leadership matters at every level.</p>
+    <p class="card-nominator"><strong>Nominated by</strong> Helen (Store Manager)</p>
+  </div>
+
+</div>
+
+
+<!-- ─── CLOSING INFO BAR ─── -->
+<div class="bottom-bar">
+  <div class="bottom-bar-item">
+    <p class="bottom-bar-label">How winners are chosen</p>
+    <p class="bottom-bar-text">The Leadership Team reviews the shortlist each quarter and selects one winner per value. Winners receive a £75 Oliver Bonas voucher and are celebrated in the Team Update.</p>
+  </div>
+  <div class="bottom-bar-item">
+    <p class="bottom-bar-label">Nominate someone</p>
+    <p class="bottom-bar-text">Know someone who's gone above and beyond? Nominations for Q2 2026 are open now. Send your nomination to <strong>internalcomms@oliverbonas.com</strong></p>
+  </div>
+  <div class="bottom-bar-item">
+    <p class="bottom-bar-label">The bar</p>
+    <p class="bottom-bar-text">We're looking for team members who've done something genuinely beyond their role — not just people doing their jobs well. If it made you think "wow, they didn't have to do that" — that's the one.</p>
+  </div>
+</div>
+
+<footer>
+  <span>Oliver Bonas &nbsp;·&nbsp; Values in Action</span>
+  <span>Q1 2026 &nbsp;·&nbsp; Internal</span>
+</footer>
+
+</body>
+</html>
