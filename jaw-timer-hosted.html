@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joy at Work 2026</title>
+</head>
+<body style="margin:0;padding:0;">
+
+<div id="jaw-widget" style="font-family:Inter,Arial,sans-serif;background:#f5f4f2;border:1px solid #dddddd;border-radius:16px;width:100%;box-sizing:border-box;margin:0 auto;overflow:hidden;display:flex;flex-wrap:wrap;">
+
+  <div style="flex:1 1 240px;background:#333333;padding:38px 32px;box-sizing:border-box;">
+    <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid #666666;color:#ffffff;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.3px;margin-bottom:28px;">
+      <span id="jaw-dot" style="width:7px;height:7px;border-radius:50%;background:#ffffff;display:inline-block;"></span>
+      <span id="jaw-badge-text">Joy at Work 2026</span>
+    </div>
+
+    <h2 id="jaw-headline" style="color:#ffffff;font-size:54px;font-weight:800;margin:0 0 16px 0;line-height:0.94;letter-spacing:-1.5px;">
+      Tell us<br>straight
+    </h2>
+    <p id="jaw-subhead" style="color:#aaaaaa;font-size:14px;margin:0;max-width:220px;line-height:1.5;">
+      Anonymously, always. Opens 1 September, closes 15 September.
+    </p>
+  </div>
+
+  <div style="flex:1 1 240px;padding:38px 32px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
+
+    <div id="jaw-timer" style="display:flex;justify-content:center;gap:0;margin-bottom:26px;border-top:1px solid #333333;border-bottom:1px solid #333333;">
+      <div style="padding:14px 12px;border-right:1px solid #333333;">
+        <div id="jaw-days" style="color:#333333;font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px;">--</div>
+        <div style="color:#888888;font-size:10px;margin-top:4px;letter-spacing:0.3px;">days</div>
+      </div>
+      <div style="padding:14px 12px;border-right:1px solid #333333;">
+        <div id="jaw-hours" style="color:#333333;font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px;">--</div>
+        <div style="color:#888888;font-size:10px;margin-top:4px;letter-spacing:0.3px;">hrs</div>
+      </div>
+      <div style="padding:14px 12px;border-right:1px solid #333333;">
+        <div id="jaw-mins" style="color:#333333;font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px;">--</div>
+        <div style="color:#888888;font-size:10px;margin-top:4px;letter-spacing:0.3px;">mins</div>
+      </div>
+      <div style="padding:14px 12px;">
+        <div id="jaw-secs" style="color:#333333;font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px;">--</div>
+        <div style="color:#888888;font-size:10px;margin-top:4px;letter-spacing:0.3px;">secs</div>
+      </div>
+    </div>
+
+    <a id="jaw-cta" href="https://forms.cloud.microsoft/e/jGk2hQjYHN" target="_blank" rel="noopener" style="display:inline-block;background:#333333;color:#ffffff;font-weight:700;font-size:16px;padding:14px 36px;border-radius:8px;text-decoration:none;margin-bottom:18px;">
+      Take the survey
+    </a>
+
+    <p style="color:#888888;font-size:12px;margin:0 0 4px 0;">
+      Ten to fifteen minutes. More questions than last year.
+    </p>
+    <p style="color:#888888;font-size:12px;margin:0;">
+      Be honest, and be kind, this only works if both are true.
+    </p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var start = new Date("2026-09-01T00:01:00");
+  var end = new Date("2026-09-15T23:59:00");
+
+  var headline = document.getElementById("jaw-headline");
+  var subhead = document.getElementById("jaw-subhead");
+  var badgeText = document.getElementById("jaw-badge-text");
+  var timer = document.getElementById("jaw-timer");
+  var cta = document.getElementById("jaw-cta");
+  var dot = document.getElementById("jaw-dot");
+
+  var daysEl = document.getElementById("jaw-days");
+  var hoursEl = document.getElementById("jaw-hours");
+  var minsEl = document.getElementById("jaw-mins");
+  var secsEl = document.getElementById("jaw-secs");
+
+  function pad(n) {
+    return n < 10 ? "0" + n : "" + n;
+  }
+
+  function render() {
+    var now = new Date();
+
+    if (now < start) {
+      var diff = start - now;
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor((diff % 86400000) / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+
+      daysEl.textContent = d;
+      hoursEl.textContent = pad(h);
+      minsEl.textContent = pad(m);
+      secsEl.textContent = pad(s);
+
+      headline.innerHTML = "Tell us<br>straight";
+      subhead.textContent = "Anonymously, always. Opens 1 September, closes 15 September.";
+      badgeText.textContent = "Joy at Work 2026";
+      dot.style.opacity = "1";
+      cta.textContent = "Get ready";
+      cta.style.background = "#333333";
+      cta.style.pointerEvents = "none";
+      timer.style.display = "flex";
+    } else if (now >= start && now <= end) {
+      var closeDiff = end - now;
+      var cd = Math.floor(closeDiff / 86400000);
+      var ch = Math.floor((closeDiff % 86400000) / 3600000);
+      var cm = Math.floor((closeDiff % 3600000) / 60000);
+      var cs = Math.floor((closeDiff % 60000) / 1000);
+
+      daysEl.textContent = cd;
+      hoursEl.textContent = pad(ch);
+      minsEl.textContent = pad(cm);
+      secsEl.textContent = pad(cs);
+
+      headline.innerHTML = "It is<br>live";
+      subhead.textContent = "Anonymously, always. Closes 15 September at 23:59.";
+      badgeText.textContent = "Live now";
+      cta.textContent = "Take the survey";
+      cta.style.background = "#333333";
+      cta.style.pointerEvents = "auto";
+      timer.style.display = "flex";
+    } else {
+      headline.innerHTML = "Thank<br>you";
+      subhead.textContent = "Joy at Work closed on 15 September, results will follow soon.";
+      badgeText.textContent = "Closed";
+      cta.style.display = "none";
+      timer.style.display = "none";
+    }
+  }
+
+  function pulse() {
+    dot.style.transition = "opacity 0.8s";
+    dot.style.opacity = dot.style.opacity === "0.3" ? "1" : "0.3";
+  }
+
+  render();
+  setInterval(render, 1000);
+  setInterval(pulse, 900);
+})();
+</script>
+
+</body>
+</html>
