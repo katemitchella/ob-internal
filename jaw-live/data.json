@@ -1,0 +1,54 @@
+{
+  "_demo": true,
+  "_note": "Sample file so the page has something realistic to load locally. Set _demo to false once this file is being written by the real Power Automate flow — that single flag is what switches the page from demo mode into live mode. See DATA-CONTRACT.md.",
+  "updatedAt": "2026-09-01T09:00:00Z",
+  "headcount": 1866,
+  "lastYearParticipation": 78,
+  "audiences": {
+    "stores": {
+      "accountability": [0, 7, 7, 14, 21, 28, 42, 63, 98, 133, 287],
+      "purpose": [0, 7, 7, 14, 21, 28, 42, 63, 98, 133, 287],
+      "progression": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133],
+      "manager-support": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133],
+      "worklife-balance": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133],
+      "action-taken": [14, 14, 21, 28, 42, 63, 98, 133, 154, 133, 0],
+      "trust-feedback": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133],
+      "manager-relationship": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133],
+      "voice": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133],
+      "recognition": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133],
+      "information-sharing": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133],
+      "fair-pay": [14, 14, 21, 28, 42, 63, 98, 133, 154, 133, 0],
+      "fair-treatment": [7, 7, 14, 21, 28, 42, 63, 98, 133, 154, 133]
+    },
+    "support-office": {
+      "accountability": [0, 1, 1, 2, 3, 4, 5, 8, 12, 17, 37],
+      "purpose": [0, 1, 1, 2, 3, 4, 5, 8, 12, 17, 37],
+      "progression": [2, 2, 3, 4, 5, 8, 13, 17, 19, 17, 0],
+      "manager-support": [1, 1, 2, 3, 4, 5, 8, 13, 16, 20, 17],
+      "worklife-balance": [1, 1, 2, 3, 4, 5, 8, 13, 16, 20, 17],
+      "action-taken": [2, 2, 3, 4, 5, 8, 13, 17, 19, 17, 0],
+      "trust-feedback": [1, 1, 2, 3, 4, 5, 8, 13, 16, 20, 17],
+      "manager-relationship": [1, 1, 2, 3, 4, 5, 8, 13, 16, 20, 17],
+      "voice": [2, 2, 3, 4, 5, 8, 13, 17, 19, 17, 0],
+      "recognition": [1, 1, 2, 3, 4, 5, 8, 13, 16, 20, 17],
+      "information-sharing": [1, 1, 2, 3, 4, 5, 8, 13, 16, 20, 17],
+      "fair-pay": [2, 2, 3, 4, 5, 8, 13, 17, 19, 17, 0],
+      "fair-treatment": [1, 1, 2, 3, 4, 5, 8, 13, 16, 20, 17]
+    },
+    "warehouse-web": {
+      "accountability": [0, 1, 1, 2, 3, 4, 6, 9, 14, 19, 41],
+      "purpose": [0, 1, 1, 2, 3, 4, 6, 9, 14, 19, 41],
+      "progression": [2, 2, 3, 4, 6, 9, 14, 19, 22, 19, 0],
+      "manager-support": [1, 1, 2, 3, 4, 6, 9, 14, 19, 22, 19],
+      "worklife-balance": [1, 1, 2, 3, 4, 6, 9, 14, 19, 22, 19],
+      "action-taken": [2, 2, 3, 4, 6, 9, 14, 19, 22, 19, 0],
+      "trust-feedback": [1, 1, 2, 3, 4, 6, 9, 14, 19, 22, 19],
+      "manager-relationship": [1, 1, 2, 3, 4, 6, 9, 14, 19, 22, 19],
+      "voice": [1, 1, 2, 3, 4, 6, 9, 14, 19, 22, 19],
+      "recognition": [1, 1, 2, 3, 4, 6, 9, 14, 19, 22, 19],
+      "information-sharing": [1, 1, 2, 3, 4, 6, 9, 14, 19, 22, 19],
+      "fair-pay": [2, 2, 3, 4, 6, 9, 14, 19, 22, 19, 0],
+      "fair-treatment": [1, 1, 2, 3, 4, 6, 9, 14, 19, 22, 19]
+    }
+  }
+}
