@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Joy at Work — Live</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+
+  /* ---------- Design tokens ---------- */
+  :root{
+    --paper: #F5F4F2;
+    --paper-raised: #FFFFFF;
+    --ink: #333333;
+    --ink-soft: #767676;
+    --line: #DDDDDD;
+    /* Audience shades — tints of ink, not colour. Darkest = "All". */
+    --shade-all: #333333;
+    --shade-1: #333333;   /* Stores */
+    --shade-2: #595959;   /* support office */
+    --shade-3: #7A7A7A;   /* Warehouse */
+    --shade-4: #9C9C9C;   /* Web fulfilment */
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font: 'Futura PT', 'Century Gothic', 'Avenir Next', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Prototype badge ---------- */
+  .proto-badge{
+    background: var(--ink);
+    color: var(--paper);
+    text-align:center;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    padding: 7px 12px;
+  }
+  .proto-badge b{ color: #ffffff; font-weight: 600; text-decoration: underline; }
+
+  /* ---------- Header ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    padding: 18px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand{ display:flex; align-items:baseline; gap: 10px; }
+  .brand h1{
+    font-size: 21px;
+    margin:0;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .brand span.sub{ color: var(--ink-soft); font-size: 13.5px; }
+
+  .live-status{ display:flex; align-items:center; gap: 18px; font-size: 13px; color: var(--ink-soft); }
+  .pulse-wrap{ display:flex; align-items:center; gap: 8px; }
+  .pulse-dot{
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 0 0 0 rgba(51,51,51,0.45);
+    animation: beat 4.5s ease-in-out infinite;
+  }
+  @keyframes beat{
+    0%   { box-shadow: 0 0 0 0 rgba(51,51,51,0.4); }
+    8%   { box-shadow: 0 0 0 8px rgba(51,51,51,0); }
+    100% { box-shadow: 0 0 0 0 rgba(51,51,51,0); }
+  }
+  .live-label{ color: var(--ink); font-weight: 600; }
+
+  /* ---------- Toast ---------- */
+  #toast{
+    position: fixed;
+    top: 76px; right: 24px;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    box-shadow: 0 6px 18px rgba(51,51,51,0.08);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 30;
+    pointer-events:none;
+  }
+  #toast.show{ opacity: 1; transform: translateY(0); }
+  #toast b{ color: var(--ink); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 32px 28px 8px;
+    display:grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 18px;
+  }
+  .hero-card{
+    background: var(--paper-raised);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    padding: 22px 24px;
+  }
+  .hero-card .eyebrow{
+    font-size: 12px; text-transform: none; letter-spacing: 0.03em;
+    color: var(--ink-soft); margin: 0 0 6px;
+  }
+  .score-row{ display:flex; align-items:flex-end; gap: 10px; }
+  .score-big{ font-size: 46px; font-weight: 600; line-height: 1; color: var(--ink); }
+  .score-of{ font-size: 15px; color: var(--ink-soft); padding-bottom: 6px; }
+  .hero-foot{ margin-top: 10px; font-size: 12.5px; color: var(--ink-soft); }
+  .trend-up{ color: var(--ink); font-weight: 600; }
+  #sparkline{ display:block; }
+  .spark-wrap{ position: relative; width: 100%; height: 46px; margin-top: 12px; overflow: hidden; }
+
+  .recommend-ring{ display:flex; align-items:center; gap: 16px; }
+  .ring-num{ font-size: 30px; font-weight: 600; }
+
+  .response-count-num{ font-size: 46px; font-weight: 600; line-height: 1; }
+
+  /* ---------- Audience pills ---------- */
+  .pills{
+    max-width: 1120px;
+    margin: 22px auto 4px;
+    padding: 0 28px;
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .pill{
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+    color: var(--ink);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: var(--font);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .pill[data-active="true"]{
+    color: #fff;
+    border-color: transparent;
+  }
+
+  /* ---------- Question grid ---------- */
+  .grid{
+    max-width: 1120px;
+    margin: 24px auto 8px;
+    padding: 0 28px;
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  .card{
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 22px 8px;
+  }
+  .card h3{
+    font-size: 15.5px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    line-height: 1.35;
+  }
+  .card .meta{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .chart-wrap{ position: relative; height: 230px; overflow: hidden; }
+
+  .threshold-note{
+    max-width: 1120px;
+    margin: 14px auto 0;
+    padding: 0 28px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .hold-text{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 14px 0 4px;
+    line-height: 1.5;
+  }
+  .grid-hold{
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 34px 22px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    max-width: 1120px;
+    margin: 30px auto 40px;
+    padding: 18px 28px 0;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 880px){
+    .hero{ grid-template-columns: 1fr; }
+    .grid{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="proto-badge" id="proto-badge">Prototype — <b>sample data</b>, not real JAW responses. Built to show the shape of a live version.</div>
+
+<header>
+  <div class="brand">
+    <h1>Joy at Work — Live</h1>
+    <span class="sub">1–15 September · scored questions only</span>
+  </div>
+  <div class="live-status">
+    <div class="pulse-wrap">
+      <span class="pulse-dot"></span>
+      <span class="live-label">Live</span>
+    </div>
+    <span id="updated-text">updated just now</span>
+    <span>·</span>
+    <span><span id="response-total-inline">0</span> responses so far</span>
+  </div>
+</header>
+
+<div id="toast"></div>
+
+<section class="hero">
+  <div class="hero-card">
+    <p class="eyebrow" id="score-eyebrow">Overall joy score, all three areas</p>
+    <div id="score-content">
+      <div class="score-row">
+        <span class="score-big" id="overall-score">0.0</span>
+        <span class="score-of">out of 10</span>
+      </div>
+      <div class="spark-wrap"><canvas id="sparkline"></canvas></div>
+      <p class="hero-foot"><span class="trend-up" id="overall-trend">+0.0</span> since the survey opened</p>
+    </div>
+    <p id="score-hold" class="hold-text" style="display:none;">Still counting for this area — check back once more responses land.</p>
+  </div>
+
+  <div class="hero-card">
+    <p class="eyebrow">Trust that feedback shapes decisions</p>
+    <div id="recommend-content">
+      <div class="recommend-ring">
+        <span class="ring-num" id="recommend-pct">0%</span>
+      </div>
+      <p class="hero-foot">Answering "agree" or "strongly agree" that survey feedback gets a fair hearing</p>
+    </div>
+    <p id="recommend-hold" class="hold-text" style="display:none;">Still counting for this area.</p>
+  </div>
+
+  <div class="hero-card">
+    <p class="eyebrow">Business-wide participation</p>
+    <div class="score-row">
+      <span class="score-big" id="participation-pct">0%</span>
+      <span class="score-of">of the business, so far</span>
+    </div>
+    <p class="hero-foot">2025's rate was <b>78%</b> — <span id="participation-vs-last-year">counting up</span></p>
+  </div>
+</section>
+
+<p class="threshold-note">Area figures appear once an area passes <span id="min-threshold-note"></span> responses, so no single answer is ever visible on its own.</p>
+
+<div class="pills" id="pills"></div>
+
+<section class="grid" id="grid"></section>
+
+<footer>
+  This page shows the scored JAW questions only — the free-text answers stay exactly where they've always lived, read by the people they're meant for. Segments only appear here once they've collected enough responses to keep individual answers unidentifiable.
+  <br />Last refreshed <span id="footer-updated">just now</span>.
+</footer>
+
+<script>
+/* =====================================================================
+   Config and sample seed. AUDIENCES and QUESTIONS define the fixed
+   shape of the dashboard; `counts` holds the actual numbers and gets
+   replaced at load time by whatever loadData() finds in data.json —
+   see DATA-CONTRACT.md for the exact shape that file needs to match.
+   ===================================================================== */
+
+const AUDIENCES = [
+  { id: 'stores',         label: 'Stores',                      colour: '#333333' },
+  { id: 'support-office', label: 'support office',              colour: '#595959' },
+  { id: 'warehouse-web',  label: 'Warehouse and web fulfilment', colour: '#767676' },
+];
+
+// Total eligible headcount, business-wide — not split by area, by design.
+// `let`, not `const`: a loaded data.json can override this once IT confirms
+// the live figure. 1,866 as at 26 August 2026.
+let TOTAL_HEADCOUNT = 1866;
+function totalHeadcount(){ return TOTAL_HEADCOUNT; }
+let LAST_YEAR_PARTICIPATION = 78; // 2025 JAW participation rate, for the "beat last year" framing
+
+// Minimum responses an area needs before its breakdown is shown — protects
+// anonymity in the early hours of the window when a single answer would be
+// too visible. Below this, we show a holding message instead of numbers.
+const MIN_RESPONSES_TO_SHOW = 15;
+
+// Scale is 0–10 (confirmed against the real form), not a 5-point Likert.
+// Index i in every counts array = the count of respondents who scored i.
+const SCALE = Array.from({ length: 11 }, (_, i) => String(i));
+
+const QUESTIONS = [
+  { id: 'accountability',       title: 'I am clear on what I am accountable for in my role' },
+  { id: 'purpose',               title: "I understand how my work contributes to OB's goals" },
+  { id: 'progression',           title: 'I believe there is a genuine opportunity for me to progress within OB' },
+  { id: 'manager-support',       title: 'I believe my manager supports my development' },
+  { id: 'worklife-balance',      title: "I am able to switch off from work when I'm not working" },
+  { id: 'action-taken',          title: 'I have noticed action being taken as a result of what team members said in the last survey' },
+  { id: 'trust-feedback',        title: 'I trust that feedback from surveys like this gets a fair hearing and shapes decisions where it can' },
+  { id: 'manager-relationship',  title: 'I have a good relationship with my manager' },
+  { id: 'voice',                 title: 'My views are heard at work' },
+  { id: 'recognition',           title: 'I am recognised when I do something well' },
+  { id: 'information-sharing',   title: 'Information is regularly and openly shared with me' },
+  { id: 'fair-pay',              title: 'I am fairly paid for the work I do' },
+  { id: 'fair-treatment',        title: 'I am treated fairly and with respect' },
+];
+
+// counts[audienceId][questionId] = [count of 0s, count of 1s, ..., count of 10s]
+function seedCounts(){
+  const counts = {};
+  AUDIENCES.forEach(a => {
+    counts[a.id] = {};
+    QUESTIONS.forEach(q => {
+      // roughly bell-shaped, skewed towards the higher end of 0–10
+      const base = [1, 1, 2, 3, 4, 6, 9, 14, 19, 16, 9];
+      counts[a.id][q.id] = base.map(n => n + Math.floor(Math.random() * 4));
+    });
+  });
+  return counts;
+}
+
+let counts = seedCounts();
+let sparkHistory = [];
+let currentFilter = 'all';
+let questionCharts = {};
+let sparkChart = null;
+
+/* ---------- Aggregation helpers ---------- */
+
+function sumCounts(a, b){ return a.map((v, i) => v + b[i]); }
+
+function getCountsFor(questionId, filter){
+  if (filter === 'all'){
+    return AUDIENCES.map(a => counts[a.id][questionId]).reduce(sumCounts);
+  }
+  return counts[filter][questionId];
+}
+
+function avgFromCounts(arr){
+  const total = arr.reduce((s, v) => s + v, 0);
+  // Scale is 0–10, so index i IS the score — no +1 offset needed.
+  const weighted = arr.reduce((s, v, i) => s + v * i, 0);
+  return total ? weighted / total : 0;
+}
+
+function totalResponses(filter){
+  // response total = respondents to the accountability question, as a proxy for headcount answering
+  if (filter === 'all'){
+    return AUDIENCES.reduce((s, a) => s + counts[a.id]['accountability'].reduce((x, y) => x + y, 0), 0);
+  }
+  return counts[filter]['accountability'].reduce((s, v) => s + v, 0);
+}
+
+function overallScore(filter){
+  const scores = QUESTIONS.map(q => avgFromCounts(getCountsFor(q.id, filter)));
+  return scores.reduce((s, v) => s + v, 0) / scores.length;
+}
+
+function trustFeedbackPct(filter){
+  const arr = getCountsFor('trust-feedback', filter);
+  const total = arr.reduce((s, v) => s + v, 0);
+  // Top-box on a 0–10 scale: scores of 8, 9 or 10 count as "agree".
+  const agree = arr[8] + arr[9] + arr[10];
+  return total ? Math.round((agree / total) * 100) : 0;
+}
+
+/* ---------- Rendering ---------- */
+
+function renderPills(){
+  const wrap = document.getElementById('pills');
+  wrap.innerHTML = '';
+  const options = [{ id: 'all', label: 'All audiences', colour: '#333333' }, ...AUDIENCES];
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'pill';
+    btn.textContent = opt.label;
+    btn.dataset.active = String(opt.id === currentFilter);
+    btn.style.background = opt.id === currentFilter ? opt.colour : '';
+    btn.style.borderColor = opt.id === currentFilter ? opt.colour : '';
+    btn.addEventListener('click', () => { currentFilter = opt.id; renderAll(true); });
+    wrap.appendChild(btn);
+  });
+}
+
+function accentFor(filter){
+  if (filter === 'all') return '#333333';
+  return AUDIENCES.find(a => a.id === filter).colour;
+}
+
+function participationPct(){
+  return Math.round((totalResponses('all') / totalHeadcount()) * 100);
+}
+
+function belowThreshold(filter){
+  return filter !== 'all' && totalResponses(filter) < MIN_RESPONSES_TO_SHOW;
+}
+
+function renderHero(){
+  const gated = belowThreshold(currentFilter);
+  document.getElementById('score-content').style.display = gated ? 'none' : '';
+  document.getElementById('score-hold').style.display = gated ? '' : 'none';
+  document.getElementById('recommend-content').style.display = gated ? 'none' : '';
+  document.getElementById('recommend-hold').style.display = gated ? '' : 'none';
+
+  const eyebrow = document.getElementById('score-eyebrow');
+  eyebrow.textContent = currentFilter === 'all'
+    ? 'Overall joy score, all three areas'
+    : 'Joy score — ' + AUDIENCES.find(a => a.id === currentFilter).label;
+
+  if (!gated){
+    document.getElementById('overall-score').textContent = overallScore(currentFilter).toFixed(1);
+    document.getElementById('recommend-pct').textContent = trustFeedbackPct(currentFilter) + '%';
+
+    sparkHistory.push(overallScore(currentFilter));
+    if (sparkHistory.length > 24) sparkHistory.shift();
+    const trend = sparkHistory.length > 1 ? (sparkHistory[sparkHistory.length - 1] - sparkHistory[0]) : 0;
+    document.getElementById('overall-trend').textContent = (trend >= 0 ? '+' : '') + trend.toFixed(1);
+
+    const ctx = document.getElementById('sparkline').getContext('2d');
+    if (sparkChart) sparkChart.destroy();
+    sparkChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: sparkHistory.map((_, i) => i),
+        datasets: [{
+          data: sparkHistory,
+          borderColor: accentFor(currentFilter),
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.35,
+          fill: false,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: { x: { display: false }, y: { display: false } },
+      },
+    });
+  }
+
+  document.getElementById('response-total-inline').textContent = totalResponses('all');
+
+  const pPct = participationPct();
+  document.getElementById('participation-pct').textContent = pPct + '%';
+  const vs = document.getElementById('participation-vs-last-year');
+  vs.textContent = pPct >= LAST_YEAR_PARTICIPATION
+    ? `we've passed it`
+    : `${LAST_YEAR_PARTICIPATION - pPct} points to go to beat it`;
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  if (belowThreshold(currentFilter)){
+    const hold = document.createElement('div');
+    hold.className = 'card grid-hold';
+    hold.innerHTML = `<p>Still counting for this area — question breakdowns appear once it passes ${MIN_RESPONSES_TO_SHOW} responses.</p>`;
+    grid.appendChild(hold);
+    return;
+  }
+
+  const accent = accentFor(currentFilter);
+
+  QUESTIONS.forEach(q => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const arr = getCountsFor(q.id, currentFilter);
+    const avg = avgFromCounts(arr).toFixed(1);
+    const n = arr.reduce((s, v) => s + v, 0);
+
+    card.innerHTML = `
+      <h3>${q.title}</h3>
+      <div class="meta"><span>average ${avg} / 10</span><span>${n} responses</span></div>
+      <div class="chart-wrap"><canvas id="chart-${q.id}"></canvas></div>
+    `;
+    grid.appendChild(card);
+
+    const ctx = card.querySelector('canvas').getContext('2d');
+    if (questionCharts[q.id]) questionCharts[q.id].destroy();
+    questionCharts[q.id] = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: SCALE,
+        datasets: [{
+          data: arr,
+          backgroundColor: accent,
+          borderRadius: 5,
+          maxBarThickness: 15,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: true } },
+        scales: {
+          x: { display: false, grid: { display: false } },
+          y: { grid: { display: false }, ticks: { color: '#767268', font: { size: 10 } } },
+        },
+      },
+    });
+  });
+}
+
+function renderAll(rebuildPills){
+  if (rebuildPills) renderPills();
+  renderHero();
+  renderGrid();
+}
+
+/* ---------- Live simulation (demo only) ---------- */
+
+function showToast(text){
+  const toast = document.getElementById('toast');
+  toast.innerHTML = text;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+function simulateTick(){
+  const audience = AUDIENCES[Math.floor(Math.random() * AUDIENCES.length)];
+  const question = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+  const bucket = Math.min(10, Math.max(0, Math.round(7 + (Math.random() - 0.35) * 5)));
+  counts[audience.id][question.id][bucket] += 1;
+
+  showToast(`<b>+1 response</b> — ${audience.label}`);
+  document.getElementById('updated-text').textContent = 'updated just now';
+  document.getElementById('footer-updated').textContent = 'just now';
+  renderAll(false);
+}
+
+/* ---------- Real data loading ---------------------------------------
+   DATA_URL points at a JSON file matching the shape described in
+   DATA-CONTRACT.md, shipped alongside this page. Once a Power Automate
+   flow is writing real values there (with `_demo` removed or set to
+   false), this page switches itself into live polling mode — nothing
+   else in the code needs to change.
+   --------------------------------------------------------------------- */
+
+const DATA_URL = 'data.json';
+let isLiveMode = false;
+
+async function loadData(){
+  try {
+    const res = await fetch(DATA_URL, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (!json || !json.audiences) return null;
+    counts = json.audiences;
+    if (typeof json.headcount === 'number') TOTAL_HEADCOUNT = json.headcount;
+    if (typeof json.lastYearParticipation === 'number') LAST_YEAR_PARTICIPATION = json.lastYearParticipation;
+    if (json.updatedAt){
+      const stamp = new Date(json.updatedAt);
+      if (!isNaN(stamp)){
+        document.getElementById('updated-text').textContent = 'updated ' + stamp.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('footer-updated').textContent = stamp.toLocaleString('en-GB');
+      }
+    }
+    return json;
+  } catch (err){
+    return null;
+  }
+}
+
+function setBadgeLive(){
+  const badge = document.getElementById('proto-badge');
+  badge.textContent = 'Connected to live JAW data — refreshing automatically.';
+  isLiveMode = true;
+}
+
+/* ---------- Init ---------- */
+
+(async () => {
+  document.getElementById('min-threshold-note').textContent = MIN_RESPONSES_TO_SHOW;
+
+  const json = await loadData();
+
+  if (json && json._demo === false){
+    // Real feed detected — switch to live polling, no fake ticks.
+    setBadgeLive();
+    renderAll(true);
+    setInterval(async () => {
+      const fresh = await loadData();
+      if (fresh) { showToast('<b>Updated</b> from the latest JAW responses'); renderAll(false); }
+    }, 60000);
+  } else if (json && json._demo === true){
+    // data.json present but still marked as sample — use its numbers as a
+    // more realistic starting point, but keep behaving as a demo.
+    renderAll(true);
+    setInterval(simulateTick, 4500);
+  } else {
+    // No data.json reachable at all (e.g. opened as a local file) —
+    // fall back to a fully self-contained demo.
+    counts = seedCounts();
+    renderAll(true);
+    setInterval(simulateTick, 4500);
+  }
+})();
+</script>
+
+</body>
+</html>
