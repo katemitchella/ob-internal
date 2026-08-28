@@ -363,6 +363,48 @@ let currentFilter = 'all';
 let questionCharts = {};
 let sparkChart = null;
 
+// Bucket 11 counts (index i = number of people who scored i) from a raw
+// list of individual scores. Power Automate hands over each person's raw
+// answers rather than pre-counted totals — this is the one place that
+// turns those into the same shape the rest of the page already works with.
+function bucketizeScores(rawScores){
+  const buckets = new Array(11).fill(0);
+  (rawScores || []).forEach(s => {
+    const n = Math.round(Number(s));
+    if (n >= 0 && n <= 10) buckets[n] += 1;
+  });
+  return buckets;
+}
+
+// All-zero counts for an area, used when it's absent from the fetched
+// file entirely (Power Automate omits an area below the response
+// threshold — this keeps the page's existing "still counting" gating
+// working correctly rather than erroring on missing data).
+function zeroCountsForAudience(){
+  const q = {};
+  QUESTIONS.forEach(qq => { q[qq.id] = new Array(11).fill(0); });
+  return q;
+}
+
+// Converts the raw-responses JSON shape ({ area: [ {questionId: score, ...}, ... ] })
+// into the bucketed counts shape the rest of the page expects.
+function countsFromRawResponses(audiencesRaw){
+  const result = {};
+  AUDIENCES.forEach(a => {
+    const rows = audiencesRaw ? audiencesRaw[a.id] : null;
+    if (!Array.isArray(rows)){
+      result[a.id] = zeroCountsForAudience();
+      return;
+    }
+    result[a.id] = {};
+    QUESTIONS.forEach(q => {
+      const scores = rows.map(r => r ? r[q.id] : undefined).filter(v => v !== undefined && v !== null && v !== '');
+      result[a.id][q.id] = bucketizeScores(scores);
+    });
+  });
+  return result;
+}
+
 /* ---------- Aggregation helpers ---------- */
 
 function sumCounts(a, b){ return a.map((v, i) => v + b[i]); }
@@ -587,7 +629,11 @@ async function loadData(){
     if (!res.ok) return null;
     const json = await res.json();
     if (!json || !json.audiences) return null;
-    counts = json.audiences;
+    // json.audiences is now { areaId: [ {questionId: score, ...}, ... ] } —
+    // one array entry per real response, raw scores, no pre-counting.
+    // This is deliberately simple on the Power Automate side; all the
+    // actual counting happens here, where it can be tested and trusted.
+    counts = countsFromRawResponses(json.audiences);
     if (typeof json.headcount === 'number') TOTAL_HEADCOUNT = json.headcount;
     if (typeof json.lastYearParticipation === 'number') LAST_YEAR_PARTICIPATION = json.lastYearParticipation;
     if (json.updatedAt){
