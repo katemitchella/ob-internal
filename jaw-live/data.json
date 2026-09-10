@@ -1,4 +1,4 @@
-{"_demo":false,"updatedAt":"2026-09-10T16:13:36.7694780Z","headcount":1866,"lastYearParticipation":78,"audiences":{"stores":[{
+{"_demo":false,"updatedAt":"2026-09-10T16:17:47.6705996Z","headcount":1866,"lastYearParticipation":78,"audiences":{"stores":[{
   "accountability":"10",
   "purpose":"10",
   "progression":"5",
@@ -7978,6 +7978,20 @@
   "information-sharing":"10",
   "fair-pay":"6",
   "fair-treatment":"10"
+},{
+  "accountability":"5",
+  "purpose":"6",
+  "progression":"3",
+  "manager-support":"6",
+  "worklife-balance":"2",
+  "action-taken":"5",
+  "trust-feedback":"7",
+  "manager-relationship":"7",
+  "voice":"5",
+  "recognition":"3",
+  "information-sharing":"5",
+  "fair-pay":"3",
+  "fair-treatment":"6"
 }],"support-office":[{
   "accountability":"10",
   "purpose":"10",
