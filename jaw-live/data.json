@@ -1,4 +1,4 @@
-{"_demo":false,"updatedAt":"2026-09-14T15:47:39.9552250Z","headcount":1866,"lastYearParticipation":78,"audiences":{"stores":[{
+{"_demo":false,"updatedAt":"2026-09-14T15:52:14.8460985Z","headcount":1866,"lastYearParticipation":78,"audiences":{"stores":[{
   "accountability":"10",
   "purpose":"10",
   "progression":"5",
@@ -9490,6 +9490,20 @@
   "information-sharing":"8",
   "fair-pay":"3",
   "fair-treatment":"8"
+},{
+  "accountability":"10",
+  "purpose":"10",
+  "progression":"10",
+  "manager-support":"8",
+  "worklife-balance":"10",
+  "action-taken":"7",
+  "trust-feedback":"8",
+  "manager-relationship":"8",
+  "voice":"8",
+  "recognition":"8",
+  "information-sharing":"8",
+  "fair-pay":"7",
+  "fair-treatment":"9"
 }],"support-office":[{
   "accountability":"10",
   "purpose":"10",
@@ -12570,6 +12584,34 @@
   "information-sharing":"3",
   "fair-pay":"5",
   "fair-treatment":"7"
+},{
+  "accountability":"8",
+  "purpose":"8",
+  "progression":"8",
+  "manager-support":"10",
+  "worklife-balance":"8",
+  "action-taken":"7",
+  "trust-feedback":"7",
+  "manager-relationship":"9",
+  "voice":"8",
+  "recognition":"8",
+  "information-sharing":"7",
+  "fair-pay":"8",
+  "fair-treatment":"9"
+},{
+  "accountability":"7",
+  "purpose":"4",
+  "progression":"4",
+  "manager-support":"7",
+  "worklife-balance":"6",
+  "action-taken":"4",
+  "trust-feedback":"5",
+  "manager-relationship":"8",
+  "voice":"5",
+  "recognition":"5",
+  "information-sharing":"6",
+  "fair-pay":"5",
+  "fair-treatment":"8"
 }],"warehouse-web":[{
   "accountability":"9",
   "purpose":"10",
