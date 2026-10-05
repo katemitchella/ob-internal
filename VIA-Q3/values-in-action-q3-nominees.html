@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Values in Action – Q3 nominees</title>
+<style>
+  :root {
+    --ink: #333333;
+    --ink-soft: #5c5c5c;
+    --paper: #ffffff;
+    --mist: #f4f4f4;
+    --work: #333333;
+    --work-tint: #f0f0f0;
+    --play: #333333;
+    --play-tint: #f0f0f0;
+    --kind: #333333;
+    --kind-tint: #f0f0f0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Futura Md BT", Futura, "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 40px 24px 56px; }
+
+  header { max-width: 680px; margin-bottom: 32px; }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.1;
+    font-weight: 500;
+    margin: 0 0 16px;
+  }
+  .intro { font-size: 1.05rem; color: var(--ink-soft); margin: 0; }
+
+  .winners { margin: 0 0 56px; }
+  .winners > h2, .all-heading { font-size: 1.6rem; font-weight: 500; margin: 0 0 18px; }
+  .winner-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .winner-card { border: 2px solid var(--ink); border-radius: 6px; padding: 22px 22px 24px; }
+  .winner-card h3 { font-size: 1.35rem; line-height: 1.25; font-weight: 500; margin: 0 0 2px; }
+  .winner-value { font-size: 0.95rem; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); }
+  .winner-team { color: var(--ink-soft); font-size: 0.92rem; margin: 0 0 12px; }
+  .winner-card p:last-child { margin: 0; }
+  .badge { display: inline-block; background: var(--ink); color: var(--paper); font-size: 0.85rem; padding: 2px 10px; border-radius: 4px; margin: 4px 6px 12px 0; }
+  @media (max-width: 720px) { .winner-grid { grid-template-columns: 1fr; } }
+
+  .finders { display: flex; flex-wrap: wrap; gap: 0 20px; margin-bottom: 8px; }
+  .finders .search { flex: 1 1 260px; }
+  .search { margin: 0 0 16px; max-width: 420px; }
+  .search label { display: block; font-size: 0.95rem; margin-bottom: 6px; }
+  .search input, .search select {
+    font: inherit;
+    color: var(--ink);
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    background: var(--paper);
+  }
+  .search input:focus-visible, .search select:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .no-results { margin: 0 0 48px; color: var(--ink-soft); }
+  article[hidden] { display: none; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 40px; padding: 0; list-style: none; }
+  .filters button {
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    padding: 6px 18px;
+    cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .filters button[data-filter="work"][aria-pressed="true"] { background: var(--work); border-color: var(--work); }
+  .filters button[data-filter="play"][aria-pressed="true"] { background: var(--play); border-color: var(--play); }
+  .filters button[data-filter="kind"][aria-pressed="true"] { background: var(--kind); border-color: var(--kind); }
+  .filters button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+  section.value { margin-bottom: 56px; }
+  section.value[hidden] { display: none; }
+  .value-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: end;
+    gap: 8px 24px;
+    padding-bottom: 16px;
+    border-bottom: 3px solid var(--accent);
+    margin-bottom: 8px;
+  }
+  .value-head h2 {
+    font-size: clamp(2.2rem, 7vw, 4rem);
+    line-height: 1;
+    font-weight: 500;
+    color: var(--accent);
+    margin: 0;
+  }
+  .value-head p { margin: 0; color: var(--ink-soft); font-size: 1rem; max-width: 34ch; }
+  .count { color: var(--ink-soft); font-size: 0.95rem; margin: 0 0 24px; }
+
+  .work { --accent: var(--work); --tint: var(--work-tint); }
+  .play { --accent: var(--play); --tint: var(--play-tint); }
+  .kind { --accent: var(--kind); --tint: var(--kind-tint); }
+
+  .nominees { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
+  article { padding: 22px 0 26px; border-bottom: 1px solid #e0e0e0; }
+  article h3 { font-size: 1.35rem; line-height: 1.25; font-weight: 500; margin: 0 0 2px; }
+  .team {
+    display: inline-block;
+    background: var(--tint);
+    color: var(--ink);
+    font-size: 0.88rem;
+    padding: 2px 10px;
+    border-radius: 4px;
+    margin: 4px 0 12px;
+  }
+  article p { margin: 0 0 12px; }
+  .by { font-size: 0.92rem; color: var(--ink-soft); margin: 0; }
+
+  footer {
+    background: var(--mist);
+    padding: 28px 28px 30px;
+    border-radius: 6px;
+    max-width: 680px;
+  }
+  footer h2 { font-size: 1.4rem; font-weight: 500; margin: 0 0 8px; }
+  footer p { margin: 0 0 10px; }
+  footer a { color: var(--ink); text-underline-offset: 3px; }
+  footer a:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .sign { margin: 18px 0 0; }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 28px 18px 40px; }
+    .nominees { grid-template-columns: 1fr; }
+    .value-head { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Values in Action – our Q3 winners and nominees</h1>
+    <p class="intro">Eighteen nominations came in this quarter, from stores, the warehouse, web fulfilment and support office. Our Leadership Team has chosen three winners, who each receive a £75 Grateful for Your Greatness voucher. Congratulations to all three, and thank you to everyone who took the time to nominate a team member.</p>
+  </header>
+
+  <section class="winners" aria-labelledby="h-winners">
+    <h2 id="h-winners">This quarter's winners</h2>
+    <div class="winner-grid">
+      <div class="winner-card">
+        <p class="winner-value">Work Hard</p>
+        <h3>Francesco Vallecoccia</h3>
+        <p class="winner-team">SEO, E-commerce</p>
+        <p>For teaching himself AI and automation and sharing what he learned, so the SEO and Content teams can spend more time on the work that matters.</p>
+      </div>
+      <div class="winner-card">
+        <p class="winner-value">Play Hard</p>
+        <h3>Jane McIntyre</h3>
+        <p class="winner-team">131 WOK</p>
+        <p>For keeping the energy and laughter going through a short-staffed sale launch day – just four months into her time at OB.</p>
+      </div>
+      <div class="winner-card">
+        <p class="winner-value">Be Kind</p>
+        <h3>Christina Brand</h3>
+        <p class="winner-team">Customer Services</p>
+        <p>For recognising when customers need extra care, and leading with heart for a grieving customer and a children's charity.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="all-heading">All Q3 nominees</h2>
+
+  <div class="finders">
+    <div class="search">
+      <label for="search">Search by name</label>
+      <input type="search" id="search" autocomplete="off" placeholder="For example, Danny or Christina">
+    </div>
+    <div class="search">
+      <label for="place">Store or department</label>
+      <select id="place">
+        <option value="">All stores and departments</option>
+      </select>
+    </div>
+  </div>
+
+  <ul class="filters" aria-label="Filter nominees by value">
+    <li><button type="button" data-filter="all" aria-pressed="true">All nominees</button></li>
+    <li><button type="button" data-filter="work" aria-pressed="false">Work Hard</button></li>
+    <li><button type="button" data-filter="play" aria-pressed="false">Play Hard</button></li>
+    <li><button type="button" data-filter="kind" aria-pressed="false">Be Kind</button></li>
+  </ul>
+
+  <!-- WORK HARD -->
+  <section class="value work" data-value="work" aria-labelledby="h-work">
+    <div class="value-head">
+      <h2 id="h-work">Work Hard</h2>
+      <p>We don't take ourselves too seriously, but we are serious about what we do.</p>
+    </div>
+    <p class="count">Eight nominees</p>
+    <div class="nominees">
+
+      <article>
+        <h3>Christie</h3>
+        <span class="team">LEM</span>
+        <p>Christie goes beyond her role, from leading a conference call in Claire's absence to supporting other stores through recruitment. She prioritises well and delegates so her own store keeps performing at its best. She listens to ideas, encourages everyone to get involved and shouts about the team's successes – always with a smile.</p>
+        <p class="by">Nominated by Amy Phillips, Cheltenham</p>
+      </article>
+
+      <article>
+        <h3>Kyle Roberts</h3>
+        <span class="team">Returns, warehouse</span>
+        <p>Kyle comes in every day with a smile and nothing is ever too much trouble. Beyond his role as returns shuttle driver, he moves stock between sites, unloads vehicles on the forklift, looks after stock for the photography studio, packs parcels back out to customers and moves pallets so other team members can get on with their work. He's also taken on running his own stock reports and investigating anomalies – a real help since Returns went down to one Team Leader.</p>
+        <p class="by">Nominated by Danny Styles, Returns</p>
+      </article>
+
+      <article>
+        <h3>Grace McDonald</h3>
+        <span class="team">Jesmond</span>
+        <p>Grace always gives 110% with customers and goes above and beyond for her fellow team members too.</p>
+        <p class="by">Nominated by Dean-Henry Younger, Jesmond</p>
+      </article>
+
+      <article>
+        <h3>Alanagh Bradley</h3>
+        <span class="team">People Team</span>
+        <p>For a large part of this year, during a period of ongoing change, Alanagh has supported the team with employee relations – all while balancing the needs of her own role. She's collaborated closely with others, kept things productive and approached it all with optimism.</p>
+        <p class="by">Nominated by Zoe Bullock, People Team</p>
+      </article>
+
+      <article>
+        <h3>Francesco Vallecoccia</h3>
+        <span class="badge">Q3 winner</span><span class="team">SEO, E-commerce</span>
+        <p>Francesco has shown real initiative and curiosity about AI and automation, teaching himself and sharing what he's learned. Thanks to him, many repetitive, time-consuming tasks across the SEO and Content teams are now simpler – freeing people up for commercially impactful work, new projects and their own development.</p>
+        <p class="by">Nominated by Charlotte Byrne, E-commerce</p>
+      </article>
+
+      <article>
+        <h3>Joe Rosenberg</h3>
+        <span class="team">Warehouse Stock Control</span>
+        <p>Joe leads the Stock Control team to a consistently high standard, with strong engagement across the team. He's also taken ownership of several critical projects, working closely with cross-functional teams to deliver key initiatives that have made a significant difference to the business.</p>
+        <p class="by">Nominated by Jason Meherin, warehouse</p>
+      </article>
+
+      <article>
+        <h3>Danny Styles</h3>
+        <span class="team">Returns, warehouse</span>
+        <p>Danny has run Returns without a second Team Leader, keeping volumes processed on time and standards high – including looking after the AM team every morning. He completed every team appraisal on time, got his team's Joy at Work surveys in by the deadline and keeps LPA and housekeeping standards excellent. He regularly helps other departments too.</p>
+        <p class="by">Nominated by Paul Chapman, warehouse, and Dovile Jurcicaite, web fulfilment</p>
+      </article>
+
+      <article>
+        <h3>Roly</h3>
+        <span class="team">QC</span>
+        <p>When the charity Spread a Smile asked for gift wrap for seriously ill children spending Christmas in hospital, Roly found the answer. He suggested donating unused rolls from previous years and designs with small QC issues – freeing up warehouse space without touching this peak's new lines – then sorted all the logistics himself.</p>
+        <p class="by">Nominated by Becky Hickey, Customer Services</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- PLAY HARD -->
+  <section class="value play" data-value="play" aria-labelledby="h-play">
+    <div class="value-head">
+      <h2 id="h-play">Play Hard</h2>
+      <p>We value a playful and positive approach to work.</p>
+    </div>
+    <p class="count">Four nominees</p>
+    <div class="nominees">
+
+      <article>
+        <h3>Jane McIntyre</h3>
+        <span class="badge">Q3 winner</span><span class="team">131 WOK</span>
+        <p>On sale launch day, with several of the team off sick, Jane said yes to a full day without hesitation. The store was busy all day, so she ate quickly and came straight back rather than leave one person alone on the shop floor. Her energy never dipped, she made three STSs, made sure her manager ate and kept the laughter going all day – and she's only been with us four months.</p>
+        <p class="by">Nominated by Julia Cheng</p>
+      </article>
+
+      <article>
+        <h3>Megan Richards</h3>
+        <span class="team">Sevenoaks</span>
+        <p>Megan powered through store tasking and a full jewellery VM refresh, keeping the energy high with a mini dance party behind the tills. When her manager came back after two weeks away supporting another store, Megan surprised her with flowers, chocolates and a card.</p>
+        <p class="by">Nominated by Lina Matiukaite, Sevenoaks</p>
+      </article>
+
+      <article>
+        <h3>Pauline</h3>
+        <span class="team">Balham</span>
+        <p>Pauline brings energy, humour and positivity to the Balham team. She celebrates team wins, makes tough days lighter and is someone everyone can count on when things get busy. She's a natural mentor who makes sure everyone feels included – and her many years at OB show just how much she lives our values.</p>
+        <p class="by">Nominated by Nithiya Jeevananthasivam, Balham</p>
+      </article>
+
+      <article>
+        <h3>Karen Whitehead</h3>
+        <span class="team">Reading</span>
+        <p>Karen stepped in as Reading's manager between permanent managers and brought positive energy, a smile and great advice. She made every team member feel listened to and cared for, and shared her experience freely. The team had a great time working with her.</p>
+        <p class="by">Nominated by Mónica Alazraki, Reading</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- BE KIND -->
+  <section class="value kind" data-value="kind" aria-labelledby="h-kind">
+    <div class="value-head">
+      <h2 id="h-kind">Be Kind</h2>
+      <p>We approach things with a cool head and a warm heart.</p>
+    </div>
+    <p class="count">Six nominees</p>
+    <div class="nominees">
+
+      <article>
+        <h3>Daisy and Georgia</h3>
+        <span class="team">Chester</span>
+        <p>Through a few months of ups and downs, Chester's Store Manager and ASM stayed professional, composed and lovely, and the whole team is thankful for them. Their unwavering support and guidance gave one team member the confidence to go for – and get – a promotion to supervisor.</p>
+        <p class="by">Nominated by Evie Fozard, Chester</p>
+      </article>
+
+      <article>
+        <h3>Kayliegh Nesbitt</h3>
+        <span class="team">Jesmond</span>
+        <p>Kayliegh has supported and trained Jesmond's new ASM, helping him settle confidently into his role.</p>
+        <p class="by">Nominated by Dean-Henry Younger, Jesmond</p>
+      </article>
+
+      <article>
+        <h3>Nerea Martin</h3>
+        <span class="team">Putney</span>
+        <p>Nerea is always ready to help other stores, whether it's a team member or a fellow manager with a problem. She's happy to coach people through anything they're finding tricky, and she's friendly and approachable with everyone.</p>
+        <p class="by">Nominated by Elena</p>
+      </article>
+
+      <article>
+        <h3>Sue Narbett</h3>
+        <span class="team">Cheltenham</span>
+        <p>Sue is kind and genuine with customers and lifts the team's spirits with her positivity and laughter. She works above and beyond, but even on quieter days her kindness shines through.</p>
+        <p class="by">Nominated by Ella Stanley, Cheltenham</p>
+      </article>
+
+      <article>
+        <h3>Christina Brand</h3>
+        <span class="badge">Q3 winner</span><span class="team">Customer Services</span>
+        <p>Christina has a gift for spotting when a customer needs extra care. When a customer who had lost her daughter wanted Purple Mama mugs to give to the people who had supported her, Christina started a hunt across OB and stayed in close, sensitive contact throughout. She also recognised that Spread a Smile's request deserved our attention, and owned every conversation with the charity.</p>
+        <p class="by">Nominated by Becky Hickey, Customer Services</p>
+      </article>
+
+      <article>
+        <h3>Molly Barnard</h3>
+        <span class="team">H&amp;G</span>
+        <p>With the Purple Mama mugs out of stock, Molly went straight to the supplier for extra samples. She worked alongside Christina over a couple of weeks to make sure a grieving customer got exactly the right mugs, with care and on time.</p>
+        <p class="by">Nominated by Becky Hickey, Customer Services</p>
+      </article>
+
+    </div>
+  </section>
+
+  <p class="no-results" id="no-results" hidden>No nominees match. Try another name, or pick a different store or department.</p>
+
+  <footer>
+    <h2>Know someone who brings our values to life?</h2>
+    <p>Nominations for Q4 are open now. Tell us who, which value they showed and what they did, and send it to <a href="mailto:internalcomms@oliverbonas.com">internalcomms@oliverbonas.com</a>.</p>
+    <p class="sign">Internal Comms</p>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var buttons = document.querySelectorAll('.filters button');
+    var sections = document.querySelectorAll('section.value');
+    var input = document.getElementById('search');
+    var place = document.getElementById('place');
+    var noResults = document.getElementById('no-results');
+    var activeFilter = 'all';
+
+    var storeNames = ['131 WOK', 'Balham', 'Cheltenham', 'Chester', 'Jesmond', 'LEM', 'Putney', 'Reading', 'Sevenoaks'];
+    var seen = {};
+    document.querySelectorAll('article .team').forEach(function (t) { seen[t.textContent] = true; });
+    var all = Object.keys(seen).sort(function (a, b) { return a.localeCompare(b); });
+    function addGroup(label, items) {
+      if (!items.length) return;
+      var g = document.createElement('optgroup');
+      g.label = label;
+      items.forEach(function (n) {
+        var o = document.createElement('option');
+        o.value = n; o.textContent = n;
+        g.appendChild(o);
+      });
+      place.appendChild(g);
+    }
+    addGroup('Stores', all.filter(function (n) { return storeNames.indexOf(n) !== -1; }));
+    addGroup('Departments', all.filter(function (n) { return storeNames.indexOf(n) === -1; }));
+
+    function normalise(t) {
+      return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function update() {
+      var q = normalise(input.value.trim());
+      var p = place.value;
+      var narrowed = q || p;
+      var anyShown = false;
+      sections.forEach(function (s) {
+        var valueMatch = activeFilter === 'all' || s.getAttribute('data-value') === activeFilter;
+        var shownHere = 0;
+        s.querySelectorAll('article').forEach(function (a) {
+          var name = a.querySelector('h3').textContent;
+          var team = a.querySelector('.team').textContent;
+          var match = (!q || normalise(name).indexOf(q) !== -1) && (!p || team === p);
+          a.hidden = !match;
+          if (match) shownHere++;
+        });
+        var count = s.querySelector('.count');
+        if (!count.dataset.base) count.dataset.base = count.textContent;
+        count.textContent = narrowed ? shownHere + ' matching' : count.dataset.base;
+        s.hidden = !valueMatch || shownHere === 0;
+        if (!s.hidden) anyShown = true;
+      });
+      noResults.hidden = anyShown;
+    }
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activeFilter = btn.getAttribute('data-filter');
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+        update();
+      });
+    });
+    input.addEventListener('input', update);
+    place.addEventListener('change', update);
+  })();
+</script>
+</body>
+</html>
